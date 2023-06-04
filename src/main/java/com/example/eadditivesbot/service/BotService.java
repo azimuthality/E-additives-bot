@@ -1,12 +1,26 @@
 package com.example.eadditivesbot.service;
 
 import com.example.eadditivesbot.config.BotConfig;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.ImmutableList;
+import com.google.common.io.Resources;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+
+import javax.annotation.concurrent.Immutable;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+
 
 @Component
 public class BotService extends TelegramLongPollingBot {
@@ -25,7 +39,7 @@ public class BotService extends TelegramLongPollingBot {
 
     }
     @Override
-    public void onUpdateReceived(Update update) {
+    public void onUpdateReceived(Update update)  {
 
         if(update.hasMessage() && update.getMessage().hasText()){
             String messaheText = update.getMessage().getText();
@@ -41,7 +55,7 @@ public class BotService extends TelegramLongPollingBot {
             }
         }
     }
-    private void getByCode(String code, long chatId){
+    private void getByCode(String code, long chatId) {
         System.out.println("text");
         String uri = "http://localhost:8080/code?code=" + code;
         RestTemplate restTemplate = new RestTemplate();
@@ -52,15 +66,17 @@ public class BotService extends TelegramLongPollingBot {
         String answer = "Hi, " + name +", nice to meet you!";
         sendMessage(chatId, answer);
     }
-    private void sendMessage(long chatId, String textToSend){
+    private void sendMessage(long chatId, String textToSend) {
         SendMessage message = new SendMessage();
+        message.enableHtml(true);
         message.setChatId(String.valueOf(chatId));
+
+        //String s = "<b>" + 1 + "</b>";
         message.setText(textToSend);
 
-        try{
+        try {
             execute(message);
-        }
-        catch (TelegramApiException e){
+        } catch (TelegramApiException e) {
 
         }
     }
