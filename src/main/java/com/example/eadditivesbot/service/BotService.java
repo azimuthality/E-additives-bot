@@ -42,11 +42,16 @@ public class BotService extends TelegramLongPollingBot {
         }
     }
     private void getByCode(String code, long chatId){
-        System.out.println("text");
         String uri = "http://localhost:8080/code?code=" + code;
         RestTemplate restTemplate = new RestTemplate();
         String result = restTemplate.getForObject(uri, String.class);
-        sendMessage(chatId, result);
+
+        System.out.println(result);
+
+        String uri_ = "http://localhost:3000";
+        RestTemplate restTemplate_ = new RestTemplate();
+        String result_ = restTemplate_.postForObject(uri_, result, String.class);
+        sendMessage(chatId, result_);
     }
     private void startCommandReceived(long chatId, String name){
         String answer = "Hi, " + name +", nice to meet you!";
@@ -56,6 +61,7 @@ public class BotService extends TelegramLongPollingBot {
         SendMessage message = new SendMessage();
         message.setChatId(String.valueOf(chatId));
         message.setText(textToSend);
+        message.enableHtml(true);
 
         try{
             execute(message);
