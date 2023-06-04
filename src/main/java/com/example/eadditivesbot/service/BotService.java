@@ -2,6 +2,7 @@ package com.example.eadditivesbot.service;
 
 import com.example.eadditivesbot.config.BotConfig;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -34,10 +35,18 @@ public class BotService extends TelegramLongPollingBot {
                     startCommandReceived(chatId, update.getMessage().getChat().getFirstName());
                     break;
                 default:
-                    sendMessage(chatId, "Sorry, command was not recognized");
+                    getByCode(messaheText, chatId);
+
 
             }
         }
+    }
+    private void getByCode(String code, long chatId){
+        System.out.println("text");
+        String uri = "http://localhost:8080/code?code=" + code;
+        RestTemplate restTemplate = new RestTemplate();
+        String result = restTemplate.getForObject(uri, String.class);
+        sendMessage(chatId, result);
     }
     private void startCommandReceived(long chatId, String name){
         String answer = "Hi, " + name +", nice to meet you!";
